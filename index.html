@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopDemo</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
 
+<body class="light">
+
+  <!-- Auth --> 
+
+  <section id="login-section">
+    <div class="login-card">
+        <h1>ShopDemo</h1>
+        <p>Please log in to continue</p>
+        <form id="login-form">
+        <input type="text" id="username" placeholder="Username" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Log In</button>
+        </form>
+        <p class="hint">Use any username and password to log in.</p>
+    </div>
+  </section>
+
+  <!-- main app -->
+  <div id="main-app" class="hidden">
+
+    <!-- NAVBAR  -->
+    <nav class="navbar">
+      <span class="brand">ShopDemo</span>
+      <div class="nav-controls">
+        <span id="welcome-msg"></span>
+        <!-- theme.js -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()"> Dark Mode</button>
+        <!-- auth.js -->
+        <button id="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </nav>
+
+
+  </div><!-- end #main-app -->
+
+  <!-- Scripts -->
+  <script src="auth.js"></script>
+  <script src="theme.js"></script>
+  <script src="main.js"></script> -->
+
+</body>
+</html>
