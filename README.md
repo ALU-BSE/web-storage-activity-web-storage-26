@@ -1,120 +1,90 @@
 [![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=23160748)
 
-**Group Activity: Implementing Web Storage Mechanisms in an E-Commerce Site**  
-*Objective:* Apply knowledge of Cookies, Local Storage, and Session Storage to build a secure and functional e-commerce demo.  
 
----
+# ShopDemo (Web Storage E-Commerce Demo)
 
-### **Task 1: User Authentication with Cookies**  
-**Scenario:** Implement a login system using cookies to retain user sessions.  
-1. Create a login form with `username` and `password` fields.  
-2. On form submission, set a **secure cookie** named `authToken` with a dummy value (e.g., "user123").  
-   - Ensure the cookie uses `HttpOnly` and `Secure` flags.  
-   - Set an expiration date of 7 days.  
-3. Display a "Logout" button that deletes the `authToken` cookie.  
+A collaborative learning project demonstrating Cookies, Local Storage,
+and Session Storage through a practical e-commerce application.
 
-**Code Skeleton:**  
-```javascript
-// Set cookie on login
-document.cookie = "authToken=user123; expires=Fri, 31 Dec 2024 12:00:00 UTC; Secure; HttpOnly; path=/";
+## Team Members
 
-// Delete cookie on logout
-document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-```
+| Name            | Role                                             
+|-----------------|--------------------------------------------------------|
+| Norette Atete   | Auth (cookies) + Theme (localStorage) + HTML/CSS       | 
+| Jesse Walusansa | Cart (sessionStorage) + Security (XSS/CSRF/Encryption) | 
 
-**Questions:**  
-- Why are `HttpOnly` and `Secure` flags important for cookies?  
-- How do session cookies differ from persistent cookies in this context?  
+## Project Structure
 
----
+shop-demo/
+├── index.html       — Full page layout
+├── index.css        — All styles, light/dark mode
+├── auth.js          — Task 1: Cookie-based login/logout
+├── theme.js         — Task 2: localStorage theme preference
+├── cart.js          — Task 3: sessionStorage shopping cart
+├── security.js      — Task 4: XSS, CSRF, AES encryption
+└── main.js          — App entry point
 
-### **Task 2: Theme Preferences with Local Storage**  
-**Scenario:** Allow users to save their preferred theme (light/dark mode).  
-1. Add a theme toggle button to the page.  
-2. Store the selected theme ("light" or "dark") in **local storage**.  
-3. Retrieve the theme on page load and apply it automatically.  
+## Web Storage Comparison
 
-**Code Skeleton:**  
-```javascript
-// Save theme preference
-localStorage.setItem("theme", "dark");
+| Criteria         | Cookies      | Local Storage     | Session Storage |
+|------------------|--------------|-------------------|-----------------|
+| Size Limit       | 4KB          | 5–10MB            | 5–10MB          |
+| Data Persistence | Configurable | Permanent         | Session only    |
+| Server Access    | Yes          | No                | No              |
+| Use Case         | Auth tokens  | Theme preferences | Cart temp data  |
 
-// Retrieve theme
-const savedTheme = localStorage.getItem("theme");
-document.body.classList.add(savedTheme);
-```
+## Features
 
-**Challenge:**  
-- Use `JSON.stringify` and `JSON.parse` to store/retrieve a settings object (e.g., `{ theme: "dark", fontSize: 16 }`).  
+### Task 1 — User Authentication (Cookies)
+- Login form sets an authToken cookie with a 7-day expiry
+- Cookie uses the Secure flag (and HttpOnly for demonstration —
+  noted in code comments as server-side only)
+- Logout deletes the cookie by backdating its expiry
+- On page reload, the app checks for the cookie to skip login
 
-**Questions:**  
-- What happens if local storage exceeds its size limit? How would you handle this?  
+### Task 2 — Theme Preferences (Local Storage)
+- Toggle between light and dark mode
+- Preference saved as a JSON object: { theme, fontSize }
+- Theme is auto-applied on every page load
+- try/catch handles QuotaExceededError if storage is full
 
----
+### Task 3 — Shopping Cart (Session Storage)
+- Add products to a session-specific cart
+- Quantities increment if the same product is added twice
+- Cart resets automatically when the browser tab is closed
+- Items can be removed individually or cleared all at once
 
-### **Task 3: Session-Specific Shopping Cart**  
-**Scenario:** Implement a cart that resets when the browser closes.  
-1. Use **session storage** to store cart items (e.g., `{ product: "Book", quantity: 2 }`).  
-2. Add a "Add to Cart" button that updates the cart.  
-3. Display cart items dynamically.  
+### Task 4 — Security
+- XSS sanitization using encodeURIComponent()
+- CSRF token generated with Math.random(), stored in 
+  sessionStorage, and injected into the login form as a 
+  hidden input, validated on submission
+- AES encryption/decryption demo using CryptoJS
 
-**Code Skeleton:**  
-```javascript
-// Add item to cart
-const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-cart.push({ product: "Book", quantity: 1 });
-sessionStorage.setItem("cart", JSON.stringify(cart));
-```
+## How to Run
 
-**Debugging:**  
-- Intentionally introduce an error (e.g., forget `JSON.parse`) and ask students to fix it.  
+Open index.html in any modern browser via Live Server — no build 
+tools needed. Test in incognito mode to see session storage reset.
 
-**Questions:**  
-- Why is session storage suitable for this use case?  
+## Individual Notes Summary
 
----
+### Norette Atete
+Cookies, local storage, and session storage allow web developers 
+to store data locally on a user's device to enhance user experience 
+and personalization. Cookies can be persistent or session-based. 
+Local storage provides long-term storage until explicitly removed. 
+Session storage is cleared once the session ends. All three are 
+vulnerable to XSS attacks so only non-sensitive data should be stored.
 
-### **Task 4: Security Implementation**  
-**Scenario:** Secure the application against XSS and CSRF attacks.  
-1. Sanitize user input using `encodeURIComponent` before displaying it on the page.  
-2. Generate a CSRF token on the server (simulate with `Math.random()`) and include it in forms.  
+### Jesse Walusansa
+Cookies are small text files sent with every HTTP request, making 
+them ideal for authentication but vulnerable to CSRF. Local storage 
+stores data permanently on the client side with no server transmission. 
+Session storage works like local storage but clears when the tab closes. 
+CSRF only affects cookies because local storage requires explicit 
+JavaScript access and is never automatically sent with requests.
 
-**Code Skeleton:**  
-```javascript
-// Sanitize input
-const userInput = "<script>alert('XSS')</script>";
-const sanitizedInput = encodeURIComponent(userInput);
+### Authors
 
-// Add CSRF token to form
-const csrfToken = Math.random().toString(36).substr(2);
-document.getElementById("form").innerHTML += `<input type="hidden" name="csrfToken" value="${csrfToken}">`;
-```
-
-**Challenge:**  
-- Encrypt sensitive data (e.g., user email) in local storage using a library like `CryptoJS`.  
-
----
-
-### **Task 5: Reflection and Comparison**  
-1. Fill out a comparison table based on the document:  
-
-| Criteria          | Cookies          | Local Storage    | Session Storage  |  
-|-------------------|------------------|------------------|------------------|  
-| Storage Limit     | 4KB              | 5-10MB           | 5-10MB           |  
-| Data Persistence  | Configurable     | Permanent        | Session-only     |  
-| Server Accessibility | Yes            | No               | No               |  
-
-2. **Discussion Questions:**  
-   - When would you use cookies over local storage?  
-   - What are the risks of storing passwords in session storage?  
-
----
-
-### **Final Challenge: Integration**  
-Combine all tasks into a single demo application where:  
-- Users log in (cookies).  
-- Customize their theme (local storage).  
-- Add items to a session-specific cart (session storage).  
-- Security measures are applied (CSRF tokens, input sanitization).  
-
-**Bonus:** Test the app in incognito mode and explain how storage behaviors differ.  
+Atete Norette
+Jesse Walusansa
