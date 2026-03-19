@@ -15,14 +15,14 @@ and Session Storage through a practical e-commerce application.
 
 ## Project Structure
 
-shop-demo/
-├── index.html       — Full page layout
-├── index.css        — All styles, light/dark mode
-├── auth.js          — Task 1: Cookie-based login/logout
-├── theme.js         — Task 2: localStorage theme preference
-├── cart.js          — Task 3: sessionStorage shopping cart
-├── security.js      — Task 4: XSS, CSRF, AES encryption
-└── main.js          — App entry point
+shop-demo
+├── index.html       # Full page layout
+├── index.css        # All styles, light/dark mode
+├── auth.js          # Task 1: Cookie-based login/logout
+├── theme.js         # Task 2: localStorage theme preference
+├── cart.js          # Task 3: sessionStorage shopping cart
+├── security.js      # Task 4: XSS, CSRF, AES encryption
+└── main.js          # App entry point
 
 ## Web Storage Comparison
 
