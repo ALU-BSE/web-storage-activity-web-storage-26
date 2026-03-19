@@ -1,35 +1,69 @@
-// Sanitize user input
+// sanitize input to prevent XSS attacks using encodeURIComponent
 function sanitizeInput(input) {
     return encodeURIComponent(input);
 }
 
-// Display sanitized input
 function displayInput() {
-    const inputField = document.getElementById("userInput").value;
+    const inputField = document.getElementById("userInput")?.value || "";
     const sanitized = sanitizeInput(inputField);
-
-    document.getElementById("output").textContent = sanitized;
+    const output = document.getElementById("output");
+    if (output) output.textContent = sanitized;
 }
 
-// Generate CSRF token
+// generate a random CSRF token, store it in sessionStorage,
+// and inject it as a hidden input into the login form
 function generateCSRFToken() {
-    return Math.random().toString(36).substr(2);
+    const token = Math.random().toString(36).substr(2);
+    sessionStorage.setItem("csrfToken", token);
+    const form = document.getElementById("login-form");
+    if (form) {
+        let input = form.querySelector('input[name="csrfToken"]');
+        if (!input) {
+            input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "csrfToken";
+            form.appendChild(input);
+        }
+        input.value = token;
+    }
 }
 
-// Add CSRF token to form
-function addCSRFToken() {
-    const form = document.getElementById("form");
-    const csrfToken = generateCSRFToken();
-
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = "csrfToken";
-    input.value = csrfToken;
-
-    form.appendChild(input);
+// validate the submitted CSRF token against the one stored in sessionStorage
+function validateCSRFToken(submittedToken) {
+    const storedToken = sessionStorage.getItem("csrfToken");
+    return submittedToken === storedToken;
 }
 
-// Initialize CSRF token on page load
-window.onload = function () {
-    addCSRFToken();
-};
+function encryptData(data) {
+    return CryptoJS.AES.encrypt(data, "shopdemo-secret").toString();
+}
+
+function decryptData(cipherText) {
+    const bytes = CryptoJS.AES.decrypt(cipherText, "shopdemo-secret");
+    return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+function runXSSDemo() {
+    const input = document.getElementById("xss-input").value;
+    document.getElementById("xss-output").innerHTML = `
+        <p><strong>Before (Raw):</strong> ${input.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+        <p><strong>After (Sanitized):</strong> <code>${encodeURIComponent(input)}</code></p>
+    `;
+}
+
+function showCSRFToken() {
+    const token = sessionStorage.getItem("csrfToken");
+    document.getElementById("csrf-output").textContent = `Current Token: ${token || "None"}`;
+}
+
+function runEncryptionDemo() {
+    const input = document.getElementById("encrypt-input").value;
+    if (!input) return;
+    const encrypted = encryptData(input);
+    localStorage.setItem("demoEncrypted", encrypted);
+    const decrypted = decryptData(encrypted);
+    document.getElementById("encrypt-output").innerHTML = `
+        <p><strong>Encrypted:</strong> <code>${encrypted}</code></p>
+        <p><strong>Decrypted:</strong> ${decrypted}</p>
+    `;
+}
